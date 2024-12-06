@@ -158,11 +158,11 @@ Dense(vocab_size + 1, activation='softmax') → CTCLayer
 **Non-trainable Parameters**: 450
 
 ## Known Issues
-1. CTC Loss
+#### 1. CTC Loss
 Unfortunately, when using the model in JavaScript, neither TensorFlow.js nor ONNX.js has native implementation of CTC loss. So if you want to make predictions in the browser backend, you may need to reconsider the model architecture.  
 This is also why I created a second model without the CTC layer, which you can find in `noCTC_tutorial.ipynb`.
 
-2. `noCTC_tutorial.ipynb`
+#### 2. `noCTC_tutorial.ipynb`
 This is an alternative solution without using CTC layer. This approach requires a larger dataset. As a reference, 13,000 images can achieve a val_loss less than 2 after 200 epochs of training.  
 Since I haven't done too detailed research, it might not be the best model structure. So here's just a brief introduction to its implementation:
 - Split the 6-digit CAPTCHA into 6 independent character recognition tasks
@@ -170,11 +170,14 @@ Since I haven't done too detailed research, it might not be the best model struc
 - Use 3 CNN convolution blocks to extract image features
 - Use categorical_crossentropy as loss function
 
-3. TensorFlow.js
+#### 3.  TensorFlow.js
 Following `noCTC_tutorial.ipynb`, I created two `HDF5` model files and trained them in the same way, with the only difference being the dataset size, resulting in different val_loss values.  
 For the test sample "TARJOT", the results are as follows:
 - TensorFlow 2.15.0 (Keras 3): val_loss ≈ 2.0 Prediction: RBRQMQ
 - TensorFlow 2.9.0 (Keras 2): val_loss ≈ 6.0 Prediction: TMRBQZ
+
+Interestingly, although the newer version of the model has a lower validation loss (theoretically should perform better), its prediction performance in the JavaScript environment is actually worse than the older model with higher validation loss. Both models can correctly recognize test samples in the Python environment, but their performance drops significantly after conversion to JavaScript.  
+This anomaly might be due to issues in the model conversion process or limitations of the TensorFlow.js converter itself. Since I have limited knowledge in this direction, I haven't made further attempts.
 
 ## Others
 This project is licensed under the MIT License.  
