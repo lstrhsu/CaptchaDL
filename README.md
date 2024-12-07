@@ -165,10 +165,10 @@ This is also why I created a second model without the CTC layer, which you can f
 #### 2. `noCTC_tutorial.ipynb`
 This is an alternative solution without using CTC layer. This approach requires a larger dataset. As a reference, 13,000 images can achieve a val_loss less than 2 after 200 epochs of training.  
 Since I haven't done too detailed research, it might not be the best model structure. So here's just a brief introduction to its implementation:
-- Split the 6-digit CAPTCHA into 6 independent character recognition tasks
-- Process images uniformly to 80×280 grayscale images
-- Use 3 CNN convolution blocks to extract image features
-- Use categorical_crossentropy as loss function
+- Split the 6-digit CAPTCHA into 6 independent character recognition tasks, with each character having its own prediction branch responsible for predicting one of 26 English letters.
+- Process images uniformly to 80×280 grayscale images, with each character represented by a 26-dimensional vector (corresponding to A-Z).
+- Use 3 CNN convolution blocks to extract image features, each block containing: batch normalization, ReLU activation, max pooling and Dropout, finally predicting characters at each position through 6 independent branches.
+- Use categorical_crossentropy as loss function, employ BatchNormalization and Dropout to prevent overfitting, and learning rate adjusts automatically based on validation set performance.
 
 #### 3.  TensorFlow.js
 Following `noCTC_tutorial.ipynb`, I created two `HDF5` model files and trained them in the same way, with the only difference being the dataset size, resulting in different val_loss values.  
